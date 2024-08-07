@@ -21,7 +21,7 @@
 
         <meta-data
                 android:name="xposedscope"
-                android:value="@array/xposed_scope"/>
+                android:value="com.miui.player"/>
     </application>
 
 </manifest>

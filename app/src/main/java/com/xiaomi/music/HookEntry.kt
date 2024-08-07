@@ -9,52 +9,40 @@ class XiaomiMusicModule : IXposedHookLoadPackage {
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         if (lpparam.packageName != "com.miui.player") return
 
-        // Hook FreeModeManager.getRemainFreeTime
         XposedHelpers.findAndHookMethod(
             "com.tencent.qqmusiclite.freemode.FreeModeManager",
             lpparam.classLoader,
             "getRemainFreeTime",
             "com.tencent.qqmusiclite.freemode.data.dto.Config",
             object : XC_MethodReplacement() {
-                override fun replaceHookedMethod(param: MethodHookParam): Any {
-                    return 114514L
-                }
+                override fun replaceHookedMethod(param: MethodHookParam): Any = 114514L
             }
         )
 
-        // Hook FreeModeManager.isFreeModeEnableAvailable
         XposedHelpers.findAndHookMethod(
             "com.tencent.qqmusiclite.freemode.FreeModeManager",
             lpparam.classLoader,
             "isFreeModeEnableAvailable",
             object : XC_MethodReplacement() {
-                override fun replaceHookedMethod(param: MethodHookParam): Any {
-                    return true
-                }
+                override fun replaceHookedMethod(param: MethodHookParam): Any = true
             }
         )
 
-        // Hook FreeModeManager.isNoLoginFreeModeEffective
         XposedHelpers.findAndHookMethod(
             "com.tencent.qqmusiclite.freemode.FreeModeManager",
             lpparam.classLoader,
             "isNoLoginFreeModeEffective",
             object : XC_MethodReplacement() {
-                override fun replaceHookedMethod(param: MethodHookParam): Any {
-                    return true
-                }
+                override fun replaceHookedMethod(param: MethodHookParam): Any = true
             }
         )
 
-        // Hook AppConfig.isNeedAd
         XposedHelpers.findAndHookMethod(
             "com.tencent.config.AppConfig",
             lpparam.classLoader,
             "isNeedAd",
             object : XC_MethodReplacement() {
-                override fun replaceHookedMethod(param: MethodHookParam): Any {
-                    return false
-                }
+                override fun replaceHookedMethod(param: MethodHookParam): Any = false
             }
         )
     }
