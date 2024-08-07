@@ -1,61 +1,52 @@
-package com.xiaomi.music
+import com.xiaomi.music;
 
-import de.robv.android.xposed.IXposedHookLoadPackage
-import de.robv.android.xposed.XC_MethodReplacement
-import de.robv.android.xposed.XposedHelpers
-import de.robv.android.xposed.callbacks.XC_LoadPackage
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
-class XiaomiMusicModule : IXposedHookLoadPackage {
-    override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
-        if (lpparam.packageName != "com.miui.player") return
+public class HookExample implements IXposedHookLoadPackage {
 
-                // Hook FreeModeManager.getRemainFreeTime
-                XposedHelpers.findAndHookMethod(
-                        "com.tencent.qqmusiclite.freemode.FreeModeManager",
-                        lpparam.classLoader,
-                        "getRemainFreeTime",
-                        "com.tencent.qqmusiclite.freemode.data.dto.Config",
-                        object : XC_MethodReplacement() {
-            override fun replaceHookedMethod(param: MethodHookParam): Any {
-                return 114514L
-            }
+    @Override
+    public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+        // 确保仅对目标应用生效
+        if (!lpparam.packageName.equals("com.miui.player")) {
+            return;
         }
-        )
 
-        // Hook FreeModeManager.isFreeModeEnableAvailable
-        XposedHelpers.findAndHookMethod(
-                "com.tencent.qqmusiclite.freemode.FreeModeManager",
-                lpparam.classLoader,
-                "isFreeModeEnableAvailable",
-                object : XC_MethodReplacement() {
-            override fun replaceHookedMethod(param: MethodHookParam): Any {
-                return true
-            }
-        }
-        )
+        // Hook FreeModeManager.getRemainFreeTime 方法
+        findAndHookMethod("com.tencent.qqmusiclite.freemode.FreeModeManager", lpparam.classLoader,
+                "getRemainFreeTime", "com.tencent.qqmusiclite.freemode.data.dto.Config", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        param.setResult(114514L); // 修改返回值
+                    }
+                });
 
-        // Hook FreeModeManager.isNoLoginFreeModeEffective
-        XposedHelpers.findAndHookMethod(
-                "com.tencent.qqmusiclite.freemode.FreeModeManager",
-                lpparam.classLoader,
-                "isNoLoginFreeModeEffective",
-                object : XC_MethodReplacement() {
-            override fun replaceHookedMethod(param: MethodHookParam): Any {
-                return true
-            }
-        }
-        )
+        // Hook FreeModeManager.isFreeModeEnableAvailable 方法
+        findAndHookMethod("com.tencent.qqmusiclite.freemode.FreeModeManager", lpparam.classLoader,
+                "isFreeModeEnableAvailable", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        param.setResult(true);
+                    }
+                });
 
-        // Hook AppConfig.isNeedAd
-        XposedHelpers.findAndHookMethod(
-                "com.tencent.config.AppConfig",
-                lpparam.classLoader,
-                "isNeedAd",
-                object : XC_MethodReplacement() {
-            override fun replaceHookedMethod(param: MethodHookParam): Any {
-                return false
-            }
-        }
-        )
+        // Hook FreeModeManager.isNoLoginFreeModeEffective 方法
+        findAndHookMethod("com.tencent.qqmusiclite.freemode.FreeModeManager", lpparam.classLoader,
+                "isNoLoginFreeModeEffective", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        param.setResult(true);
+                    }
+                });
+
+        // Hook AppConfig.isNeedAd 方法
+        findAndHookMethod("com.tencent.config.AppConfig", lpparam.classLoader,
+                "isNeedAd", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        param.setResult(false);
+                    }
+                });
     }
 }
